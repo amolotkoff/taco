@@ -29,11 +29,8 @@ class TaskQueue:
     def put(self, priority, task_id, task):
         heapq.heappush(self.add_tasks, (priority, task_id, task))
 
-    def remove(self, task_id, is_done):
-        if is_done:
-            
-        else:
-            self.remove_tasks.add(task_id)
+    def remove(self, task_id):
+        self.remove_tasks.add(task_id)
 
     def size(self):
         return len(self.pq) + len(self.add_tasks) - len(self.remove_tasks)

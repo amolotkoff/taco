@@ -6,8 +6,9 @@ from taco.tasks import task
 
 @task()
 def drink_big_bear():
-    print("drinking big bear")
-    yield "doing"
+    while True:
+        print(f"drinking")
+        yield "doing"
 
 
 @task()
@@ -20,10 +21,12 @@ def dig():
         size = size + percent
         yield "doing"
 
-    yield "TASK_DONE"
+    print(f"digging")
+
+    yield "doing"
 
 
 drink_big_bear(agent="dwarf-1", priority=10)
-dig(agent="dwarf-1", priority=5)
+#dig(agent="dwarf-1", priority=5)
 
 manager.run()

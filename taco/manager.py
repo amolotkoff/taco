@@ -16,13 +16,20 @@ class Manager:
         def loop():
             while True:
                 time.sleep(tick_time)
-                for agent_id, agent_tasks in self.tasks.items():
+                for agent_id in list(self.tasks.keys()):
+                    agent_tasks = self.tasks[agent_id]
+
                     if agent_tasks.size() == 0:
                         del self.tasks[agent_id]
                         continue
 
                     agent_priority, agent_task_id, agent_task = agent_tasks.get()
-                    agent_task_result = next(agent_task)
+                    agent_task_result = ""
+
+                    try:
+                        agent_task_result = next(agent_task)
+                    except StopIteration:
+                        agent_tasks.remove(agent_task_id)
 
                     if agent_task_result == DONE:
                         agent_tasks.remove(agent_task_id)
