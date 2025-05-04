@@ -26,10 +26,7 @@ class Manager:
                     agent_priority, agent_task_id, agent_task = agent_tasks.get()
                     agent_task_result = ""
 
-                    try:
-                        agent_task_result = next(agent_task)
-                    except StopIteration:
-                        agent_tasks.remove(agent_task_id)
+                    agent_task_result = next(agent_task, DONE)
 
                     if agent_task_result == DONE:
                         agent_tasks.remove(agent_task_id)

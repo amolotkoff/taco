@@ -19,14 +19,11 @@ def dig():
     while size < 100:
         print(f"digging on {size}%")
         size = size + percent
-        yield "doing"
-
-    print(f"digging")
-
-    yield "doing"
+        yield ""
+    yield ""
 
 
 drink_big_bear(agent="dwarf-1", priority=10)
-#dig(agent="dwarf-1", priority=5)
+dig(agent="dwarf-1", priority=5)
 
 manager.run()
