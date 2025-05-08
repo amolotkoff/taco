@@ -1,29 +1,31 @@
-import time
-
 from taco.manager import manager
 from taco.tasks import task
+from taco.tasks import agent
 
+@agent
+class DwarfAgent:
+    def __init__(self, dig_percent):
+        self.dig_percent = dig_percent
 
-@task()
-def drink_big_bear():
-    while True:
-        print(f"drinking")
-        yield "doing"
+    @task(10)
+    def dig(self):
+        dig_result = 0
 
+        while dig_result <= 100:
+            print(f"dig {dig_result}%")
+            dig_result += self.dig_percent
+            yield
 
-@task()
-def dig():
-    size = 0
-    percent = 10
+    @task(20)
+    def drink(self):
+        for i in range(0, 3):
+            print(f"drink {i}")
+            yield
 
-    while size < 100:
-        print(f"digging on {size}%")
-        size = size + percent
-        yield ""
-    yield ""
+dwarf1 = DwarfAgent(10)
+dwarf1.start()
 
-
-drink_big_bear(agent="dwarf-1", priority=10)
-dig(agent="dwarf-1", priority=5)
+dwarf2 = DwarfAgent(20)
+dwarf2.start()
 
 manager.run()

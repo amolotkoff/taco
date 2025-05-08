@@ -10,6 +10,7 @@ PROCESS = "TASK_PROCESS"
 
 class Manager:
     def __init__(self, tick_time):
+        self.pre_tasks = []
         self.tasks = {}
         self.loop_thread = None
 
@@ -24,8 +25,6 @@ class Manager:
                         continue
 
                     agent_priority, agent_task_id, agent_task = agent_tasks.get()
-                    agent_task_result = ""
-
                     agent_task_result = next(agent_task, DONE)
 
                     if agent_task_result == DONE:
@@ -36,7 +35,7 @@ class Manager:
     def run(self):
         self.loop_thread.start()
 
-    def add(self, agent_id, task_name, priority, agent_task):
+    def add_task(self, agent_id, task_name, priority, agent_task):
         if agent_id not in self.tasks:
             self.tasks[agent_id] = TaskQueue()
 
@@ -44,5 +43,6 @@ class Manager:
         tasks.put(priority, f"{agent_id}_{task_name}_{uuid.uuid4()}", agent_task)
 
         return self
+
 
 manager = Manager(1)

@@ -3,14 +3,40 @@ import inspect
 from taco.manager import manager
 
 
-def task():
+def task(priority = 0):
     def decorator(generator_func):
-        def wrapper(*args, **kwargs):
-
-            agent_id = kwargs.pop('agent', None)
-            task_priority = kwargs.pop('priority', None)
+        def task_wrapper(self, *args, **kwargs):
+            agent_id = kwargs.pop('agent', self)
+            task_priority = kwargs.pop('priority', priority)
 
             #calls generator and returns iterator
-            manager.add(agent_id, generator_func.__name__, task_priority, generator_func(*args, **kwargs))
-        return wrapper
+            manager.add_task(agent_id, generator_func.__name__, task_priority, generator_func(self, *args, **kwargs))
+        return task_wrapper
     return decorator
+
+
+def agent(agent_cls):
+    def has_decorator(func, decorator_name):
+        while hasattr(func, '__wrapped__'):
+            # The decorator is the function we are currently inspecting
+
+            if func.__name__ == decorator_name:
+                return True
+
+            func = func.__wrapped__
+
+        return func.__name__ == decorator_name
+
+    methods = []
+
+    for name, method in inspect.getmembers(agent_cls, predicate=inspect.isfunction):
+        if has_decorator(method, 'task_wrapper'):
+            methods.append(method)
+
+    def start(self):
+        for method in methods:
+            method(self)
+
+    setattr(agent_cls, 'start', start)
+
+    return agent_cls
