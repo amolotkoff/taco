@@ -16,18 +16,9 @@ class DwarfAgent:
         while dig_result <= 100:
             print(f"dig {dig_result}%")
             dig_result += self.dig_percent
-            yield
+            yield 2
 
-    @task(20)
-    def drink(self):
-        for i in range(0, 3):
-            print(f"drink {i}")
-            yield
-
-dwarf1 = DwarfAgent(10, 5)
+dwarf1 = DwarfAgent(10, 25)
 dwarf1.start()
-
-dwarf2 = DwarfAgent(20)
-dwarf2.start()
 
 manager.run()
