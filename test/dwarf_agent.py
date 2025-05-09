@@ -2,12 +2,14 @@ from taco.manager import manager
 from taco.tasks import task
 from taco.tasks import agent
 
+
 @agent
 class DwarfAgent:
-    def __init__(self, dig_percent):
+    def __init__(self, dig_percent, dig_task):
         self.dig_percent = dig_percent
+        self.dig_task = dig_task
 
-    @task(10)
+    @task("dig_task")
     def dig(self):
         dig_result = 0
 
@@ -22,7 +24,7 @@ class DwarfAgent:
             print(f"drink {i}")
             yield
 
-dwarf1 = DwarfAgent(10)
+dwarf1 = DwarfAgent(10, 5)
 dwarf1.start()
 
 dwarf2 = DwarfAgent(20)

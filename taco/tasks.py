@@ -1,3 +1,5 @@
+from typing import Callable
+
 import taco.manager
 import inspect
 from taco.manager import manager
@@ -8,6 +10,11 @@ def task(priority = 0):
         def task_wrapper(self, *args, **kwargs):
             agent_id = kwargs.pop('agent', self)
             task_priority = kwargs.pop('priority', priority)
+
+            if type(task_priority) is str:
+                task_priority = getattr(self, task_priority)
+                if callable(task_priority):
+                    task_priority = task_priority()
 
             #calls generator and returns iterator
             manager.add_task(agent_id, generator_func.__name__, task_priority, generator_func(self, *args, **kwargs))
