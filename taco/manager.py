@@ -1,7 +1,7 @@
 import uuid
 import time
 import threading
-from taco.util import TaskQueue
+from taco.util import DisplacingLinkedQueue
 
 
 DONE = "TASK_DONE"
@@ -37,7 +37,7 @@ class Manager:
 
     def add_task(self, agent_id, task_name, priority, agent_task):
         if agent_id not in self.tasks:
-            self.tasks[agent_id] = TaskQueue()
+            self.tasks[agent_id] = DisplacingLinkedQueue()
 
         tasks = self.tasks[agent_id]
         tasks.put(priority, f"{agent_id}_{task_name}_{uuid.uuid4()}", agent_task)

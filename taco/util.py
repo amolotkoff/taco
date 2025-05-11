@@ -2,54 +2,72 @@ import queue
 import heapq
 from collections import namedtuple
 
+queue_node = namedtuple("Node", ["id", "item", "priority", "nextNode", "swapped"])
 
-class TaskQueue:
+
+# 1. Add new task
+# 2. Append to it priority
+# 3. Get it
+class DisplacingLinkedQueue:
     def __init__(self):
-        self.task_node = namedtuple("TaskNode", ["priority", "id", "task", "nextNode"])
         self.head = None
-        self.remove_tasks = set()
-        self.add_tasks = []
+        self.append_items = []
 
     def get(self):
         """returns current item task if it is not presented in queue returns none"""
 
         #append new add tasks if it is needed be added to queue
-        for add_task in self.add_tasks:
-            append_task_priority = add_task[0]
-            append_task_id = add_task[1]
-            append_task = add_task[2]
+        for append_item in self.append_items:
+            next_lookup_node = self.head
+            prev_lookup_node = None
 
-            if self.head is None:
-                self.head = self.task_node(append_task_priority, append_task_id, append_task, None)
-            else:
-                if self.head.priority < append_task_priority:
-                    task = self.head
-                    self.head = self.task_node(append_task_priority, append_task_id, append_task, task)
-                else:
-                    task = self.head
-                    prev_task = None
+            if next_lookup_node is None:
+                self.head = append_item
+                continue
 
-                    while task.priority > append_task_priority:
-                        if task.nextNode is None:
-                            break
+            while not next_lookup_node is None:
+                if next_lookup_node.swapped:
+                    next_next_lookup_node = next_lookup_node.nextNode
 
-                        prev_task = task
-                        task = task.nextNode
+                    if not prev_lookup_node is None:
+                        prev_lookup_node.nextNode = next_next_lookup_node
 
-        return not self.head is None if self.head.task else None
 
-    def put(self, priority, task_id, task):
-        pass
+                if next_lookup_node.priority < append_item.priority:
+                    append_item.nextNode = next_lookup_node
 
-    def put(self, priority):
-        pass
+                    if prev_lookup_node is None:
+                        self.head = append_item
+                    else:
+                        prev_lookup_node.nextNode = append_item
+                    continue
 
-    def remove(self, task_id):
-        pass
+                prev_lookup_node = next_lookup_node
+                next_lookup_node = next_lookup_node.nextNode
 
-    def remove(self):
-        pass
+            if next_lookup_node is None:
+                prev_lookup_node.nextNode = append_item
 
+        self.append_items.clear()
+
+        if not self.head is None:
+            return self.head.item, self.head.id
+
+        return None
+
+    def pop(self, item_id):
+        next_node = self.head
+
+        while not next_node is None:
+            if next_node.id == item_id:
+                next_node.swapped = True
+                break
+
+            next_node = next_node.nextNode
+
+    def push(self, item_id, item, priority):
+        item = queue_node(item_id, item, priority, None, False)
+        self.append_items.append(item)
 
     def size(self):
         pass
