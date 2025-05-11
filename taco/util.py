@@ -35,8 +35,6 @@ class TaskQueue:
 
                         prev_task = task
                         task = task.nextNode
-                            
-                    task.
 
         return not self.head is None if self.head.task else None
 
