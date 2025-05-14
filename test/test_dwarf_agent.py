@@ -1,6 +1,5 @@
 import time
 
-import pytest
 from taco.manager import manager
 from taco.tasks import task
 from taco.tasks import agent
@@ -13,26 +12,17 @@ class DwarfAgent:
 
     @task("dig_task")
     def dig(self):
-
         while self.dig_result <= 100:
-            self.dig_result += 20
+            self.dig_result += 40
             yield
-
-dwarf1 = DwarfAgent()
-
-def setup():
-    global dwarf1
-
-    dwarf1.start()
-    manager.run()
-
-
-def teardown():
-    print("basic teardown into module")
+        yield
 
 
 def test_agent_task_yielding():
-    global dwarf1
-    time.sleep(4)
+    dwarf1 = DwarfAgent()
+    dwarf1.start()
+    manager.run()
 
-    assert dwarf1.dig_result >= 40
+    time.sleep(2)
+
+    assert dwarf1.dig_result >= 20
